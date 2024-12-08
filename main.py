@@ -4,11 +4,10 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 from db import create_report, setup_database, save_expense_to_db
 from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD
 
-# Logging configuration
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# States for conversation handler
 CATEGORY, AMOUNT = range(2)
 
 
