@@ -2,17 +2,9 @@ import os
 
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
-import pandas as pd
 import matplotlib.pyplot as plt
+from fake_data import df
 
-# דוגמת נתונים
-data = {
-    'category': ['Food', 'Transport', 'Entertainment', 'Rent'],
-    'amount': [100, 50, 150, 500]
-}
-
-# יצירת DataFrame עם pandas
-df = pd.DataFrame(data)
 
 
 # פונקציה לשליחת התמונה
