@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: database/
+      dockerfile: database/Dockerfile
+    container_name: app_container
+    ports:
+      - "8000:8000"  # אפליקציה
+    environment:
+      DATABASE_URL: "postgresql://yossi:8520@postgres:5432/personal_financial_assistant"
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+
+  postgres:
+    image: postgres:17
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: yossi
+      POSTGRES_PASSWORD: 8520
+      POSTGRES_DB: personal_financial_assistant
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
