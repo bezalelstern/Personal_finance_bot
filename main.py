@@ -1,7 +1,8 @@
 import logging
-import sqlite3
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, ConversationHandler
+from db import create_report, setup_database, save_expense_to_db
+from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD
 
 # Logging configuration
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -10,121 +11,91 @@ logger = logging.getLogger(__name__)
 # States for conversation handler
 CATEGORY, AMOUNT = range(2)
 
-# Database setup
-def setup_database():
-    conn = sqlite3.connect('expenses.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS expenses (
-        id INTEGER PRIMARY KEY,
-        user_id INTEGER,
-        category TEXT,
-        amount REAL,
-        date DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-    ''')
-    conn.commit()
-    conn.close()
 
-def create_report(user_id):
-    conn = sqlite3.connect('expenses.db')
-    cursor = conn.cursor()
-
-    # Total expenses by category
-    cursor.execute('''
-            SELECT category, 
-                   SUM(amount) as total_amount, 
-                   COUNT(*) as transaction_count 
-            FROM expenses 
-            WHERE user_id = ? 
-            GROUP BY category 
-            ORDER BY total_amount DESC
-        ''', (user_id,))
-
-    results = cursor.fetchall()
-    conn.close()
-    return results
-
-def save_expense_to_db(user_id, category, amount):
-    conn = sqlite3.connect('expenses.db')
-    cursor = conn.cursor()
-    cursor.execute(
-        'INSERT INTO expenses (user_id, category, amount) VALUES (?, ?, ?)',
-        (user_id, category, amount)
-    )
-    conn.commit()
-    conn.close()
-
-# Start command handler
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Start the bot and show options."""
-    setup_database()
 
-    keyboard = [["💸 Add Expense", "📊 Report"], ["❌ Cancel"]]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    setup_database()
+    reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
 
     await update.message.reply_text(
-        "Welcome to Expense Tracker Bot! 💰\n\n"
-        "Use the buttons below to manage your expenses.",
+        welcome_text,
         reply_markup=reply_markup
     )
 
-# Add expense flow
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+    reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
+
+    await update.message.reply_text(help_text, reply_markup=reply_markup)
+
+
 async def add_expense_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Start adding an expense."""
-    categories = [['Food', 'Transport'], ['Entertainment', 'Shopping'], ['Other']]
-    reply_markup = ReplyKeyboardMarkup(categories, resize_keyboard=True, one_time_keyboard=True)
+    context.user_data.clear()  # Clear any previous conversation data
+
+    keyboard = [category for category in EXPENSE_CATEGORIES]
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
 
     await update.message.reply_text(
-        "Please select a category for your expense:",
+        "Please select a category for your expense 📂:",
         reply_markup=reply_markup
     )
     return CATEGORY
 
+
 async def get_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Store the category and ask for the amount."""
-    context.user_data['category'] = update.message.text
-    await update.message.reply_text("How much was the expense?")
+    category = update.message.text.split()[-1]  # Extract category without emoji
+    context.user_data['category'] = category
+
+    await update.message.reply_text(
+        "How much was the expense? 💰\n"
+        "(Enter the amount in your local currency)"
+    )
     return AMOUNT
+
 
 async def save_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Save the expense to the database."""
     try:
         amount = float(update.message.text)
-        category = context.user_data['category']
+        if amount <= 0:
+            raise ValueError("Amount must be positive")
+
         user_id = update.effective_user.id
+        category = context.user_data['category']
 
         save_expense_to_db(user_id, category, amount)
 
+        # Confirmation message with details
+        confirmation = (
+            f"✅ Expense Saved!\n"
+            f"📂 Category: {category}\n"
+            f"💰 Amount: {amount:.2f}"
+        )
+
+        reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
+
         await update.message.reply_text(
-            f"✅ Expense saved!\n"
-            f"Category: {category}\n"
-            f"Amount: {amount}",
-            reply_markup=ReplyKeyboardMarkup([["💸 Add Expense", "📊 Report"], ["❌ Cancel"]], resize_keyboard=True)
+            confirmation,
+            reply_markup=reply_markup
         )
         return ConversationHandler.END
     except ValueError:
-        await update.message.reply_text("Please enter a valid number.")
+        await update.message.reply_text("Please enter a valid positive number.")
         return AMOUNT
 
-async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Cancel the conversation."""
-    await update.message.reply_text(
-        "Expense tracking canceled.",
-        reply_markup=ReplyKeyboardMarkup([["💸 Add Expense", "📊 Report"], ["❌ Cancel"]], resize_keyboard=True)
-    )
-    return ConversationHandler.END
 
-# Generate expense report
-async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Generate an expense report."""
     user_id = update.effective_user.id
     results = create_report(user_id)
 
+    reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
+
     if not results:
         await update.message.reply_text(
-            "No expenses recorded yet.",
-            reply_markup=ReplyKeyboardMarkup([["💸 Add Expense", "📊 Report"], ["❌ Cancel"]], resize_keyboard=True)
+            "No expenses recorded yet. Start tracking your spending! 💰",
+            reply_markup=reply_markup
         )
         return
 
@@ -135,15 +106,29 @@ async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
         total_expenses += total
 
     report += f"\nTotal Expenses: {total_expenses:.2f}"
+
     await update.message.reply_text(
         report,
-        reply_markup=ReplyKeyboardMarkup([["💸 Add Expense", "📊 Report"], ["❌ Cancel"]], resize_keyboard=True)
+        reply_markup=reply_markup
     )
 
-# Main function
+
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Cancel the current conversation."""
+    reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
+
+    await update.message.reply_text(
+        "Operation canceled. What would you like to do next? 🤔",
+        reply_markup=reply_markup
+    )
+    return ConversationHandler.END
+
+
 def main() -> None:
     """Run the bot."""
     setup_database()
+
+    # Replace with your actual bot token
     application = Application.builder().token('7349809392:AAHRKfATE1rMImHVejkOeF1Y9afAZz4HE6w').build()
 
     # Conversation handler for adding expenses
@@ -153,16 +138,22 @@ def main() -> None:
             CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_category)],
             AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_expense)]
         },
-        fallbacks=[MessageHandler(filters.Regex('^❌ Cancel$'), cancel)]
+        fallbacks=[
+            MessageHandler(filters.Regex('^❌ Cancel$'), cancel),
+            CommandHandler('cancel', cancel)
+        ]
     )
 
     # Register handlers
     application.add_handler(CommandHandler('start', start))
+    application.add_handler(CommandHandler('help', help_command))
     application.add_handler(conv_handler)
     application.add_handler(MessageHandler(filters.Regex('^📊 Report$'), generate_report))
+    application.add_handler(MessageHandler(filters.Regex('^❓ Help$'), help_command))
 
     # Run the bot
     application.run_polling(allowed_updates=Update.ALL_TYPES)
+
 
 if __name__ == '__main__':
     main()
