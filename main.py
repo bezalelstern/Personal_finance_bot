@@ -106,6 +106,7 @@ async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     report += f"\nTotal Expenses: {total_expenses:.2f}"
 
+
     await update.message.reply_text(
         report,
         reply_markup=reply_markup
