@@ -1,7 +1,7 @@
 import os
 
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram.ext import CallbackContext
 import matplotlib.pyplot as plt
 from fake_data import df
 
