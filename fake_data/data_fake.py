@@ -10,7 +10,7 @@ from database.models import Base, User, Categorise, Expenses, FixedIncome, Tempo
 fake = Faker()
 
 # חיבור לבסיס הנתונים
-DATABASE_URL = "postgresql://yossi:8520@localhost:5432/personal_financial_assistant"  # שנה את זה ל-URL של בסיס הנתונים שלך
+DATABASE_URL = "postgresql://admin:1234@localhost:5432/fake_data"  # שנה את זה ל-URL של בסיס הנתונים שלך
 engine = create_engine(DATABASE_URL, echo=True)
 Base.metadata.create_all(engine)
 

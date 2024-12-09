@@ -1,7 +1,7 @@
 import logging
-from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, ConversationHandler
-from db import create_report, setup_database, save_expense_to_db
+from repository.db import create_report, setup_database, save_expense_to_db, create_category
 from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD
 
 
@@ -13,7 +13,6 @@ CATEGORY, AMOUNT = range(2)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
-    setup_database()
     reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
 
     await update.message.reply_text(

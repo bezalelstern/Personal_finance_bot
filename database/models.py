@@ -1,7 +1,7 @@
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
-
+from database.config import engine
 
 Base = declarative_base()
 
@@ -19,7 +19,7 @@ class User(Base):
 class Categorise(Base):
     __tablename__ = 'categories'
     id = Column(Integer, primary_key=True)
-    category_name = Column(String, nullable=False)
+    category_name = Column(String(80), nullable=False)
 
     expenses = relationship("Expenses", back_populates="category", cascade="all, delete-orphan")
 
@@ -56,6 +56,10 @@ class FixedIncome(Base):
 
     user = relationship("User", back_populates="fixed_incomes")
 
+
+
+def init_db():
+    Base.metadata.create_all(engine)
 
 
 
