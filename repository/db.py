@@ -1,5 +1,5 @@
 from datetime import datetime
-from database.models import User, Expenses, Categorise, FixedIncome, TemporaryIncome, init_db
+from database.models import User, Categorise, FixedIncome, TemporaryIncome, init_db, FixedExpenses, TemporaryExpenses
 from database.config import db_session
 
 
@@ -21,7 +21,7 @@ def create_report(user_id):
     return new_user.id
 
 
-def save_expense_to_db(user_id, category, amount):
+def save_temporary_expenses_to_db(user_id, category, amount,time= datetime.now()):
 
     user = db_session.query(User).get(user_id)
 
@@ -32,11 +32,30 @@ def save_expense_to_db(user_id, category, amount):
     if not category_obj:
         category_obj = create_category(category)
 
-    expense = Expenses(user_id=user_id, category_id=category_obj.id, amount=amount, time=datetime.now())
+    expense = TemporaryExpenses(user_id=user_id, category_id=category_obj.id, amount=amount, time=time)
     db_session.add(expense)
     db_session.commit()
 
     return expense
+
+
+def save_fixed_expenses_to_db(user_id, category, amount,time= datetime.now()):
+
+    user = db_session.query(User).get(user_id)
+
+    if not user:
+        user = create_report(user_id)
+
+    category_obj = db_session.query(Categorise).filter_by(category_name=category).first()  # חיפוש לפי שם הקטגוריה
+    if not category_obj:
+        category_obj = create_category(category)
+
+    expense = FixedExpenses(user_id=user_id, category_id=category_obj.id, amount=amount, time=time)
+    db_session.add(expense)
+    db_session.commit()
+
+    return expense
+
 
 
 
