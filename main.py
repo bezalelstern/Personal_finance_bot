@@ -62,7 +62,7 @@ def main(get_expence_type=None) -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
     print("bot is running")
 
-
+#הרצה
 if __name__ == '__main__':
     main()
 
