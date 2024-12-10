@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP, BIGINT
+from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP, BIGINT, BigInteger
 from sqlalchemy.orm import relationship
 from database.config import engine
 
@@ -49,7 +49,7 @@ class FixedIncome(Base):
 class FixedExpenses(Base):
     __tablename__ = 'fixed_expenses'
     id = Column(Integer, primary_key=True)
-    user_id = Column(BIGINT, ForeignKey('users.id'), nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
     amount = Column(Integer, nullable=False)
     time = Column(TIMESTAMP, nullable=False)
@@ -61,7 +61,7 @@ class FixedExpenses(Base):
 class TemporaryExpenses(Base):
     __tablename__ = 'temporary_expenses'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
     amount = Column(Integer, nullable=False)
     time = Column(TIMESTAMP, nullable=False)

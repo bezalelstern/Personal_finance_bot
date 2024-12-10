@@ -1,7 +1,7 @@
 from sqlalchemy.orm.sync import update
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, ConversationHandler
-from repository.db import create_report, setup_database, save_expense_to_db, create_category
+from repository.db import create_report, setup_database, save_temporary_expenses_to_db, save_fixed_expenses_to_db, create_category
 from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD
 
 EXPENSE_TYPE, CATEGORY, AMOUNT, INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION = range(6)
@@ -45,7 +45,8 @@ async def add_expense_start(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
 
 async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
+    type = update.message.text
+    context.user_data["expense_type"] = type
     keyboard = [category for category in EXPENSE_CATEGORIES]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
 
@@ -76,8 +77,14 @@ async def save_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
         user_id = update.effective_user.id
         category = context.user_data['category']
+        type = context.user_data['expense_type']
 
-        save_expense_to_db(user_id, category, amount)
+        if type == 'Fixed Expense':
+            save_fixed_expenses_to_db(user_id, category, amount)
+
+        elif type == 'Temporary Expense':
+            save_temporary_expenses_to_db(user_id, category, amount)
+
 
         # Confirmation message with details
         confirmation = (

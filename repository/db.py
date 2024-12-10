@@ -18,7 +18,7 @@ def create_report(user_id):
     db_session.add(new_user)
     db_session.commit()
 
-    return new_user.id
+    return new_user
 
 
 def save_temporary_expenses_to_db(user_id, category, amount,time= datetime.now()):
