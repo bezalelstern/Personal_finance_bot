@@ -7,6 +7,7 @@ from repository.db import  setup_database
 from telegram_repository.expense_repo import add_expense_start, get_category, save_expense, cancel, start, help_command, \
     generate_report, \
     CATEGORY, AMOUNT, INCOME_TYPE, INCOME_DESCRIPTION, INCOME_AMOUNT, EXPENSE_TYPE, get_expense_type
+from telegram_repository.analytics_commands import send_expense_prediction, send_savings_insights
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -17,13 +18,14 @@ def main(get_expence_type=None) -> None:
     """Run the bot."""
     setup_database()
 
-    application = Application.builder().token('7349809392:AAHRKfATE1rMImHVejkOeF1Y9afAZz4HE6w').build()
+    application = Application.builder().token('7572707557:AAHRb6tdvbnAQemj6K0EzgMrBaTpVDvTuQQ').build()
 
     # Conversation handler for adding expenses
     conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^💸 Add Expense$'), add_expense_start)],
         states={
-            EXPENSE_TYPE: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_expense_type)],            CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_category)],
+            EXPENSE_TYPE: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_expense_type)],
+            CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_category)],
             AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_expense)]
         },
         fallbacks=[
@@ -49,6 +51,8 @@ def main(get_expence_type=None) -> None:
     application.add_handler(conv_handler_income)
     application.add_handler(MessageHandler(filters.Regex('^📊 Report$'), generate_report))
     application.add_handler(MessageHandler(filters.Regex('^❓ Help$'), help_command))
+    application.add_handler(MessageHandler(filters.Regex('^ predict$'), send_expense_prediction))
+    application.add_handler(MessageHandler(filters.Regex('^ insights$'), send_savings_insights))
 
     # Run the bot
     application.run_polling(allowed_updates=Update.ALL_TYPES)
