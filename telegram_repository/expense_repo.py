@@ -4,8 +4,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 from repository.db import create_report, setup_database, save_expense_to_db, create_category
 from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD
 
-CATEGORY, AMOUNT, INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION = range(5)
-
+EXPENSE_TYPE, CATEGORY, AMOUNT, INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION = range(6)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
@@ -15,6 +14,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         reply_markup=reply_markup
     )
 
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Cancel the current conversation."""
+    reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
+
+    await update.message.reply_text(
+        "Operation canceled. What would you like to do next? 🤔",
+        reply_markup=reply_markup
+    )
+    return ConversationHandler.END
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
@@ -23,8 +31,20 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     await update.message.reply_text(help_text, reply_markup=reply_markup)
 
 
+
 async def add_expense_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     context.user_data.clear()  # Clear any previous conversation data
+    types = [['Fixed Expense', 'Temporary Expense']]
+
+    reply_markup = ReplyKeyboardMarkup(types, resize_keyboard=True, one_time_keyboard=True)
+
+    await update.message.reply_text(
+        "Please select the type of expense (Fixed or Temporary):",
+                                    reply_markup=reply_markup)
+    return EXPENSE_TYPE
+
+
+async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     keyboard = [category for category in EXPENSE_CATEGORIES]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
@@ -35,7 +55,6 @@ async def add_expense_start(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     )
     return CATEGORY
 
-
 async def get_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     category = update.message.text.split()[-1]  # Extract category without emoji
     context.user_data['category'] = category
@@ -45,6 +64,7 @@ async def get_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         "(Enter the amount in your local currency)"
     )
     return AMOUNT
+
 
 
 async def save_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -107,12 +127,3 @@ async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     )
 
 
-async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Cancel the current conversation."""
-    reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
-
-    await update.message.reply_text(
-        "Operation canceled. What would you like to do next? 🤔",
-        reply_markup=reply_markup
-    )
-    return ConversationHandler.END

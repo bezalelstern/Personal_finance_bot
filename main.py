@@ -4,14 +4,16 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 
 from telegram_repository.income_repo import add_income_start, get_income_type, get_income_amount, save_income
 from repository.db import  setup_database
-from telegram_repository.expense_repo import add_expense_start, get_category, save_expense, cancel, start, help_command, generate_report, \
-    CATEGORY, AMOUNT, INCOME_TYPE, INCOME_DESCRIPTION, INCOME_AMOUNT
+from telegram_repository.expense_repo import add_expense_start, get_category, save_expense, cancel, start, help_command, \
+    generate_report, \
+    CATEGORY, AMOUNT, INCOME_TYPE, INCOME_DESCRIPTION, INCOME_AMOUNT, EXPENSE_TYPE, get_expense_type
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("telegram").setLevel(logging.WARNING)
 
-
-def main() -> None:
+def main(get_expence_type=None) -> None:
     """Run the bot."""
     setup_database()
 
@@ -21,7 +23,7 @@ def main() -> None:
     conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^💸 Add Expense$'), add_expense_start)],
         states={
-            CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_category)],
+            EXPENSE_TYPE: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_expense_type)],            CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_category)],
             AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_expense)]
         },
         fallbacks=[
@@ -31,12 +33,14 @@ def main() -> None:
     )
     conv_handler_income = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^💰 Add Income$'), add_income_start)],
-        states={INCOME_TYPE: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_income_type)],
-                INCOME_AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_income_amount)],
-                INCOME_DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_income)]},
-        fallbacks=[MessageHandler(filters.Regex('^❌ Cancel$'), cancel), CommandHandler('cancel', cancel)])
-
-
+        states={
+            INCOME_TYPE: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_income_type)],
+            INCOME_AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_income_amount)],
+            INCOME_DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_income)]},
+        fallbacks=[
+            MessageHandler(filters.Regex('^❌ Cancel$'), cancel),
+            CommandHandler('cancel', cancel)]
+    )
 
     # Register handlers
     application.add_handler(CommandHandler('start', start))
@@ -48,11 +52,11 @@ def main() -> None:
 
     # Run the bot
     application.run_polling(allowed_updates=Update.ALL_TYPES)
+    print("bot is running")
 
 
 if __name__ == '__main__':
     main()
 
 
-# Add income flow
 

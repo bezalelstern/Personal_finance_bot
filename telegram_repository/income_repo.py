@@ -15,6 +15,7 @@ async def add_income_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     )
     return INCOME_TYPE
 
+
 async def get_income_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Store the income type and ask for the amount."""
     context.user_data['income_type'] = update.message.text
@@ -47,7 +48,7 @@ async def save_income(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
             f"Type: {income_type}\n"
             f"Amount: {amount}\n"
             f"Description: {description}",
-            reply_markup=ReplyKeyboardMarkup([["💸 Add Expense", "📊 Report"], ["💰 Add Income", "❓ Help"], ["❌ Cancel"]], resize_keyboard=True)
+            reply_markup=ReplyKeyboardMarkup([["💸 Add Expense","💰 Add Income" ], ["📊 Report", "❓ Help"], ["❌ Cancel"]], resize_keyboard=True)
         )
         return ConversationHandler.END
     except ValueError:
