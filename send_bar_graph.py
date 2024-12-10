@@ -1,28 +1,32 @@
+import matplotlib.pyplot as plt
 import os
-
 from telegram import Update
 from telegram.ext import CallbackContext
-import matplotlib.pyplot as plt
-from fake_data import df
 
+# פונקציה ליצירת גרף בר ושליחתו לבוט
+async def create_bar_chart(update: Update, context: CallbackContext, df, x_col, y_col, title, chart_name):
+    """יצירת גרף בר ושליחתו לבוט טלגרם."""
 
-# פונקציה ליצירת גרף בר
-async def send_bar_chart(update: Update, context: CallbackContext) -> None:
-    """Send a bar chart for expenses by date."""
-
-    # יצירת גרף בר
+    # יצירת הגרף
     plt.figure(figsize=(10, 6))
-    plt.bar(df['date'].dt.strftime('%Y-%m-%d'), df['amount'], color='orange')
-    plt.title('Expenses by Date')
-    plt.xlabel('Date')
-    plt.ylabel('Amount')
+    plt.bar(df[x_col].dt.strftime('%Y-%m-%d'), df[y_col], color='orange')
+    plt.title(title)
+    plt.xlabel(x_col.capitalize())
+    plt.ylabel(y_col.capitalize())
 
-    # שמירת התמונה
-    plt.savefig('bar_chart.png')
+    # שמירת הגרף
+    chart_path = f'{chart_name}.png'
+    plt.savefig(chart_path)
+    plt.close()
 
-    # שליחת התמונה
-    with open('bar_chart.png', 'rb') as photo:
-        await update.message.reply_photo(photo=photo)
+    # שליחת הגרף לבוט
+    try:
+        with open(chart_path, 'rb') as photo:
+            await update.message.reply_photo(photo=photo)
+        print(f"נשלח גרף: {chart_path}")
+    except Exception as e:
+        print(f"שגיאה בשליחת הגרף: {e}")
 
-    # מחיקת התמונה אחרי שליחה
-    os.remove('bar_chart.png')
+    # מחיקת הגרף לאחר השליחה
+    if os.path.exists(chart_path):
+        os.remove(chart_path)

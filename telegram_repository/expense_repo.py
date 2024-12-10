@@ -1,8 +1,9 @@
 from sqlalchemy.orm.sync import update
 from telegram import Update, ReplyKeyboardMarkup
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, ConversationHandler
+from telegram.ext import ContextTypes, ConversationHandler
 from repository.db import create_report, setup_database, save_temporary_expenses_to_db, save_fixed_expenses_to_db, create_category
 from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD
+from telegram.ext import CallbackContext
 
 EXPENSE_TYPE, CATEGORY, AMOUNT, INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION = range(6)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -105,32 +106,6 @@ async def save_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         return AMOUNT
 
 
-async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Generate an expense report."""
-    user_id = update.effective_user.id
-    results = create_report(user_id)
 
-    reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
-
-    if not results:
-        await update.message.reply_text(
-            "No expenses recorded yet. Start tracking your spending! 💰",
-            reply_markup=reply_markup
-        )
-        return
-
-    report = "📊 Expense Report:\n\n"
-    total_expenses = 0
-    for category, total, count in results:
-        report += f"{category}: {total:.2f} (Transactions: {count})\n"
-        total_expenses += total
-
-    report += f"\nTotal Expenses: {total_expenses:.2f}"
-
-
-    await update.message.reply_text(
-        report,
-        reply_markup=reply_markup
-    )
 
 

@@ -24,6 +24,7 @@ async def get_income_type(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await update.message.reply_text("How much was the income?")
     return INCOME_AMOUNT
 
+
 async def get_income_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Store the income amount and ask for a description."""
     try:
