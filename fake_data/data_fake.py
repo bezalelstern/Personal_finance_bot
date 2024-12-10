@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from faker import Faker
-from database.models import Base, User, Categorise, Expenses, FixedIncome, TemporaryIncome  # import המודלים שלך
+from database.models import Base, User, Categorise, FixedIncome, TemporaryIncome, \
+    TemporaryExpenses, FixedExpenses  # import המודלים שלך
 
 # אתחול של Faker לצורך יצירת נתונים רנדומליים
 fake = Faker()
@@ -52,9 +53,17 @@ def create_random_temporary_income(user_id):
     )
 
 
-def create_random_expense(user_id, category_id):
-    """יוצר הוצאה רנדומלית"""
-    return Expenses(
+def create_random_temporary_expenses(user_id, category_id):
+    """יוצר הוצאה זמנית רנדומלית"""
+    return TemporaryExpenses(
+        user_id=user_id,
+        category_id=category_id,
+        amount=random.randint(100, 5000),
+        time=fake.date_this_year()
+    )
+def create_random_fixed_expenses(user_id, category_id):
+    """יוצר הוצאה זמנית רנדומלית"""
+    return FixedExpenses(
         user_id=user_id,
         category_id=category_id,
         amount=random.randint(100, 5000),
@@ -86,7 +95,10 @@ def seed_database():
 
         # הוצאות
         for _ in range(random.randint(1, 5)):
-            user.expenses.append(create_random_expense(user.id, random.choice(categories).id))
+            user.temporary_expenses.append(create_random_temporary_expenses(user.id, random.choice(categories).id))
+        # הוצאות קבועות
+        for _ in range(random.randint(1, 5)):
+            user.fixed_expenses.append(create_random_fixed_expenses(user.id, random.choice(categories).id))
 
     session.commit()
     print("הנתונים נוספו בהצלחה!")
