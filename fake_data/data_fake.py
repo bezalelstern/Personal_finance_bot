@@ -4,8 +4,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from faker import Faker
-from database.models import Base, User, Categorise, FixedIncome, TemporaryIncome, \
-    TemporaryExpenses, FixedExpenses  # import המודלים שלך
+from database.models import Base, User, Categorise, FixedIncome, TemporaryIncome, TemporaryExpenses, FixedExpenses  # import המודלים שלך
 
 # אתחול של Faker לצורך יצירת נתונים רנדומליים
 fake = Faker()
@@ -24,7 +23,8 @@ def create_random_user():
     return User(
         fixed_incomes=[],
         temporary_incomes=[],
-        expenses=[]
+        temporary_expenses=[],
+        fixed_expenses=[]
     )
 
 
@@ -93,7 +93,7 @@ def seed_database():
         for _ in range(random.randint(1, 3)):
             user.temporary_incomes.append(create_random_temporary_income(user.id))
 
-        # הוצאות
+        #   הוצאות
         for _ in range(random.randint(1, 5)):
             user.temporary_expenses.append(create_random_temporary_expenses(user.id, random.choice(categories).id))
         # הוצאות קבועות

@@ -28,7 +28,7 @@ def save_temporary_expenses_to_db(user_id, category, amount,time= datetime.now()
     if not user:
         user = create_report(user_id)
 
-    category_obj = db_session.query(Categorise).filter_by(category_name=category).first()  # חיפוש לפי שם הקטגוריה
+    category_obj = db_session.query(Categorise).filter_by(category_name=category).first()
     if not category_obj:
         category_obj = create_category(category)
 
