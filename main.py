@@ -24,7 +24,8 @@ def main(get_expence_type=None) -> None:
     conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex('^💸 Add Expense$'), add_expense_start)],
         states={
-            EXPENSE_TYPE: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_expense_type)],            CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_category)],
+            EXPENSE_TYPE: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_expense_type)],
+            CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_category)],
             AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_expense)]
         },
         fallbacks=[
@@ -50,8 +51,8 @@ def main(get_expence_type=None) -> None:
     application.add_handler(conv_handler_income)
     application.add_handler(MessageHandler(filters.Regex('^📊 Report$'), generate_report))
     application.add_handler(MessageHandler(filters.Regex('^❓ Help$'), help_command))
-    application.add_handler(CommandHandler("predict", send_expense_prediction))
-    application.add_handler(CommandHandler("insights", send_savings_insights))
+    application.add_handler(MessageHandler(filters.Regex('^ predict$'), send_expense_prediction))
+    application.add_handler(MessageHandler(filters.Regex('^ insights$'), send_savings_insights))
 
     # Run the bot
     application.run_polling(allowed_updates=Update.ALL_TYPES)
