@@ -10,7 +10,7 @@ from database.models import Base, User, Categorise, FixedIncome, TemporaryIncome
 fake = Faker()
 
 # חיבור לבסיס הנתונים
-DATABASE_URL = "postgresql://admin:1234@localhost:5432/fake_data"  # שנה את זה ל-URL של בסיס הנתונים שלך
+DATABASE_URL = "postgresql://admin:1234@localhost:5433/personal_financial_assistant"  # שנה את זה ל-URL של בסיס הנתונים שלך
 engine = create_engine(DATABASE_URL, echo=True)
 Base.metadata.create_all(engine)
 
@@ -21,6 +21,7 @@ session = Session()
 def create_random_user():
     """יוצר משתמש רנדומלי"""
     return User(
+        id = 5451883767,
         fixed_incomes=[],
         temporary_incomes=[],
         temporary_expenses=[],
@@ -74,7 +75,11 @@ def create_random_fixed_expenses(user_id, category_id):
 def seed_database():
     """מכניס 100,000 שורות רנדומליות לטבלאות"""
     # צור משתמשים רנדומליים
-    users = [create_random_user() for _ in range(1000)]
+    user1 = create_random_user()
+    users =[]
+    users.append(user1)
+    tr = []
+
     session.add_all(users)
     session.commit()
 
@@ -86,19 +91,19 @@ def seed_database():
     # צור הכנסות קבועות, זמניות והוצאות רנדומליות
     for user in users:
         # הכנסות קבועות
-        for _ in range(random.randint(1, 3)):
-            user.fixed_incomes.append(create_random_fixed_income(user.id))
+            for _ in range(random.randint(10, 30)):
+                user.fixed_incomes.append(create_random_fixed_income(user.id))
 
-        # הכנסות זמניות
-        for _ in range(random.randint(1, 3)):
-            user.temporary_incomes.append(create_random_temporary_income(user.id))
+            # הכנסות זמניות
+            for _ in range(random.randint(10, 30)):
+                user.temporary_incomes.append(create_random_temporary_income(user.id))
 
-        #   הוצאות
-        for _ in range(random.randint(1, 5)):
-            user.temporary_expenses.append(create_random_temporary_expenses(user.id, random.choice(categories).id))
-        # הוצאות קבועות
-        for _ in range(random.randint(1, 5)):
-            user.fixed_expenses.append(create_random_fixed_expenses(user.id, random.choice(categories).id))
+            #   הוצאות
+            for _ in range(random.randint(10, 50)):
+                user.temporary_expenses.append(create_random_temporary_expenses(user.id, random.choice(categories).id))
+            # הוצאות קבועות
+            for _ in range(random.randint(10, 50)):
+                user.fixed_expenses.append(create_random_fixed_expenses(user.id, random.choice(categories).id))
 
     session.commit()
     print("הנתונים נוספו בהצלחה!")
