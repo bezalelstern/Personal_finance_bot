@@ -9,7 +9,7 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'users'
-    id = Column(BIGINT, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
 
     fixed_incomes = relationship("FixedIncome", back_populates="user", cascade="all, delete-orphan")
     temporary_incomes = relationship("TemporaryIncome", back_populates="user", cascade="all, delete-orphan")
@@ -29,7 +29,7 @@ class Categorise(Base):
 class TemporaryIncome(Base):
     __tablename__ = 'temporary_income'
     id = Column(Integer, primary_key=True)
-    user_id = Column(BIGINT, ForeignKey('users.id'), nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     amount = Column(Integer, nullable=False)
     time = Column(TIMESTAMP, nullable=False)
 
@@ -39,7 +39,7 @@ class TemporaryIncome(Base):
 class FixedIncome(Base):
     __tablename__ = 'fixed_income'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     amount = Column(Integer, nullable=False)
     time = Column(TIMESTAMP, nullable=False)
 
