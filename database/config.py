@@ -5,7 +5,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 
-connection_url = "postgresql://admin:1234@localhost:5432/personal_financial_assistant"
+connection_url =  "postgresql://admin:1234@postgres:5432/personal_financial_assistant"
 engine = create_engine(connection_url)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,

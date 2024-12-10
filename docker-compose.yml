@@ -15,7 +15,7 @@ services:
 #    volumes:
 #      - .:/app
 
-  postgres:
+  db-sql:
     image: postgres:17
     container_name: postgres_container
     environment:
@@ -26,6 +26,5 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
 volumes:
   postgres_data:
