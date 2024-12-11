@@ -1,7 +1,7 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP, BIGINT, BigInteger
+from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP,  BigInteger, Text
 from sqlalchemy.orm import relationship
-from database.config import engine
+from database.config_postgres import engine
 
 Base = declarative_base()
 
@@ -32,6 +32,7 @@ class TemporaryIncome(Base):
     user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     amount = Column(Integer, nullable=False)
     time = Column(TIMESTAMP, nullable=False)
+    description = Column(Text, nullable=True)
 
     user = relationship("User", back_populates="temporary_incomes")
 
@@ -42,6 +43,7 @@ class FixedIncome(Base):
     user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     amount = Column(Integer, nullable=False)
     time = Column(TIMESTAMP, nullable=False)
+    description = Column(Text, nullable=True)
 
 
     user = relationship("User", back_populates="fixed_incomes")

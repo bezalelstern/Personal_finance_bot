@@ -1,4 +1,4 @@
-from news_data.db.config_mongo import collection
+from kafka_data.db.config_mongo import collection
 
 
 def insert_to_mongo(data):

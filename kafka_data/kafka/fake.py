@@ -1,7 +1,7 @@
 from faker import Faker
 import random
 
-from news_data.db.config_mongo import collection
+from kafka_data.db.config_mongo import collection
 
 # יצירת אובייקט Faker
 fake = Faker()

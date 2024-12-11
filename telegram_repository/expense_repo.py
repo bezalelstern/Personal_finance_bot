@@ -1,7 +1,7 @@
 from sqlalchemy.orm.sync import update
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, ConversationHandler
-from repository.db import create_report, setup_database, save_temporary_expenses_to_db, save_fixed_expenses_to_db, create_category
+from repository.postgres_repo import create_report, setup_database, save_temporary_expenses_to_db, save_fixed_expenses_to_db, create_category
 from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD
 from telegram.ext import CallbackContext
 
