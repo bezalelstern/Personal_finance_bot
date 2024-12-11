@@ -2,24 +2,26 @@ from datetime import datetime, timedelta
 
 from database.config_mongo import collection
 
-
 def get_news_from_last_week(keyword):
-    result = keyword.replace(",", " | ")
-
-    one_week_ago = datetime.now() - timedelta(weeks=1)
-    query = {
-        "date": {"$gte": one_week_ago.isoformat()},
-        "message": {"$regex": f".*{result}.*"}
-    }
     try:
-        results = collection.find(query, {"_id": 0, "channel": 1, "message": 1, "date": 1, "image_url": 1})
-        news_list = list(results)
+        result = keyword.replace(",", " | ")
+        one_week_ago = datetime.now() - timedelta(weeks=1)
+        query = {
+            "date": {"$gte": one_week_ago.isoformat()},
+            "message": {"$regex": f".*{result}.*"}
+        }
+        results = collection.find(query)
 
-        return news_list
+        news_list = list(results)
+        print("Raw data:", news_list)
+        processed_list = [i for i in news_list]
+        print("Processed data:", processed_list)
+
+        return processed_list
 
     except Exception as e:
-        return str(e)
-
+        print(f"Conversion error: {e}")
+        return []
 
 if __name__ == "__main__":
     news = get_news_from_last_week("כיי")

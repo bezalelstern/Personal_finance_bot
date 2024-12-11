@@ -235,7 +235,7 @@
 #
 import asyncio
 from telegram import Update, ReplyKeyboardMarkup
-from telegram.ext import ContextTypes, ConversationHandler
+from telegram.ext import ContextTypes, ConversationHandler, MessageHandler, CommandHandler, filters
 
 from repository.postgres_repo import save_temporary_expenses_to_db, save_fixed_expenses_to_db
 from repository.postgres_repo import create_report, setup_database, save_temporary_expenses_to_db, save_fixed_expenses_to_db, create_category
@@ -368,3 +368,13 @@ async def save_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         await start_timer(context)
         await update.message.reply_text("Please enter a valid positive number.")
         return AMOUNT
+
+
+async def handle_any_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle any user message to reset the timer."""
+    await start_timer(context)
+
+# Add a handler for any message
+application = None  # Replace this with your Application instance
+if application:
+    application.add_handler(MessageHandler(filters.ALL, handle_any_message))
