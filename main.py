@@ -64,7 +64,6 @@ def main(get_expence_type=None) -> None:
     application.add_handler(MessageHandler(filters.Regex('^📅 Daily Report$'), generate_bar_graph))
     application.add_handler(MessageHandler(filters.Regex('^📉 Monthly Report$'), send_expenses_pie_chart))
     application.add_handler(MessageHandler(filters.Regex('^📈 Weekly Report$'), send_incomes_pie_chart))
-
     application.add_handler(MessageHandler(filters.Regex('^📊 Yearly Report$'), generate_histogram))
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)
