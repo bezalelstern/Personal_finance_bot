@@ -1,9 +1,10 @@
 from telegram.ext import ContextTypes, ConversationHandler
 
 from repository.postgres_repo import save_temporary_income_to_db, save_fixed_income_to_db
-from telegram_repository.expense_repo import INCOME_TYPE, INCOME_DESCRIPTION, INCOME_AMOUNT
 from telegram import Update, ReplyKeyboardMarkup
 
+from telegram_repository.main_repo import INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION
+from texts import MAIN_KEYBOARD
 
 
 async def add_income_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -45,10 +46,10 @@ async def save_income(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         user_id = update.effective_user.id
 
         if income_type == 'Temporary Income':
-            save_temporary_income_to_db(user_id, amount)
+            save_temporary_income_to_db(user_id, amount,description)
 
         elif income_type == 'Fixed Income':
-            save_fixed_income_to_db(user_id, amount)
+            save_fixed_income_to_db(user_id, amount,description)
 
 
         await update.message.reply_text(
@@ -56,9 +57,10 @@ async def save_income(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
             f"Type: {income_type}\n"
             f"Amount: {amount}\n"
             f"Description: {description}",
-            reply_markup=ReplyKeyboardMarkup([["💸 Add Expense","💰 Add Income" ], ["📊 Report", "❓ Help"], ["❌ Cancel"]], resize_keyboard=True)
+            reply_markup=ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
         )
         return ConversationHandler.END
     except ValueError:
         await update.message.reply_text("There was an error saving your income. Please try again.")
+        ConversationHandler.END
         return INCOME_DESCRIPTION
