@@ -3,6 +3,7 @@ import os
 from telegram import Update
 from telegram.ext import CallbackContext
 
+
 # פונקציה ליצירת גרף בר ושליחתו לבוט
 async def create_bar_chart(update: Update, context: CallbackContext, df, x_col, y_col, title, chart_name):
     """יצירת גרף בר ושליחתו לבוט טלגרם."""

@@ -1,6 +1,5 @@
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
-import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 from database.models import TemporaryExpenses, FixedExpenses
