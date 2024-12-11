@@ -1,22 +1,33 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database.models import FixedIncome, TemporaryIncome, FixedExpenses, TemporaryExpenses, Categorise
-from send_bar_graph import create_bar_chart
-from telegram import Update
-from telegram.ext import CallbackContext
 
+from database.models import FixedIncome, TemporaryIncome, FixedExpenses, TemporaryExpenses, Categorise
+
+
+#חיבור לדאטאבייס
 connection_url = "postgresql://admin:1234@localhost:5433/personal_financial_assistant"
 engine = create_engine(connection_url)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# פונקציה לשליפת נתונים ממודל והמרה ל-DataFrame
+# פונקציה לשליפת נתונים לפי קטגוריה (הוצאות או הכנסות)
+def fetch_data_by_category(model):
+    """שליפת נתונים לפי קטגוריה (הוצאות או הכנסות)."""
+    result = session.query(Categorise.category_name, model.amount) \
+                    .select_from(Categorise) \
+                    .join(model, model.category_id == Categorise.id) \
+                    .all()
+    df = pd.DataFrame(result, columns=['category', 'amount'])
+    return df
+
+# פונקציה לשליפת כל הנתונים מהדאטאבייס והמרה ל-DataFrame
 def fetch_table_data(model, columns):
     results = session.query(*columns).all()
     df = pd.DataFrame(results, columns=[col.name for col in columns])
     if 'time' in df.columns:
         df['time'] = pd.to_datetime(df['time'])
+    close_session()
     return df
 
 
@@ -28,11 +39,7 @@ tables = {
     "Temporary Expenses": (TemporaryExpenses, [TemporaryExpenses.time, TemporaryExpenses.amount]),
 }
 
-# יצירת גרפים ושליחתם לבוט
-async def generate_charts(update: Update, context: CallbackContext):
-    for title, (model, cols) in tables.items():
-        df = fetch_table_data(model, cols)
-        if not df.empty:
-            await create_bar_chart(update, context, df, 'time', 'amount', title, title.replace(" ", "_"))
-        else:
-            print(f"טבלה ריקה: {title}")
+def close_session():
+    session.close()
+
+
