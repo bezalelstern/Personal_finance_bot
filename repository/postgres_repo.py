@@ -1,6 +1,6 @@
 from datetime import datetime
 from database.models import User, Categorise, FixedIncome, TemporaryIncome, init_db, FixedExpenses, TemporaryExpenses
-from database.config import db_session
+from database.config_postgres import db_session
 
 
 
@@ -67,26 +67,26 @@ def create_category(category_name):
 
 
 
-def save_fixed_income_to_db(user_id, amount):
+def save_fixed_income_to_db(user_id, amount,description):
 
     user = db_session.query(User).get(user_id)
     if not user:
         raise ValueError(f"User with id {user_id} does not exist.")
 
-    fixed_income = FixedIncome(user_id=user_id, amount=amount, time=datetime.now())
+    fixed_income = FixedIncome(user_id=user_id, amount=amount, time=datetime.now(),description=description)
     db_session.add(fixed_income)
     db_session.commit()
 
     return fixed_income
 
 
-def save_temporary_income_to_db(user_id, amount):
+def save_temporary_income_to_db(user_id, amount,description):
 
     user = db_session.query(User).get(user_id)
     if not user:
         raise ValueError(f"User with id {user_id} does not exist.")
 
-    temporary_income = TemporaryIncome(user_id=user_id, amount=amount, time=datetime.now())
+    temporary_income = TemporaryIncome(user_id=user_id, amount=amount, time=datetime.now(),description=description)
     db_session.add(temporary_income)
     db_session.commit()
 

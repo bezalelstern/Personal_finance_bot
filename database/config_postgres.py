@@ -9,3 +9,7 @@ engine = create_engine(connection_url)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
+
+
+
+
