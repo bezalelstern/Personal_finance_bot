@@ -12,8 +12,6 @@ from telegram_repository.income_repo import add_income_start, get_income_type, g
 from telegram_repository.expense_repo import add_expense_start, get_category, save_expense, cancel, start, help_command, \
     CATEGORY, AMOUNT, INCOME_TYPE, INCOME_DESCRIPTION, INCOME_AMOUNT, EXPENSE_TYPE, get_expense_type
 
-
-
 from telegram_repository.analize_repo import generate_report
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -49,7 +47,7 @@ async def get_news(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main(get_expence_type=None) -> None:
     """Run the bot."""
     setup_database()
-
+    print("bot is running")
     application = Application.builder().token('7349809392:AAHRKfATE1rMImHVejkOeF1Y9afAZz4HE6w').build()
 
     # Conversation handler for adding expenses
@@ -84,20 +82,21 @@ def main(get_expence_type=None) -> None:
         fallbacks=[CommandHandler('cancel', cancel)]
     )
     # Register handlers
-    application.add_handler(CommandHandler('start', start))
-    application.add_handler(CommandHandler('help', help_command))
     application.add_handler(conv_handler_news)
     application.add_handler(conv_handler_expense)
     application.add_handler(conv_handler_income)
+    application.add_handler(CommandHandler('start', start))
+    application.add_handler(CommandHandler('help', help_command))
     application.add_handler(MessageHandler(filters.Regex('^📊 Report$'), generate_report))
     application.add_handler(MessageHandler(filters.Regex('^❓ Help$'), help_command))
     application.add_handler(MessageHandler(filters.Regex('^📅 Daily Report$'), generate_bar_graph))
     application.add_handler(MessageHandler(filters.Regex('^📉 Monthly Report$'), send_expenses_pie_chart))
     application.add_handler(MessageHandler(filters.Regex('^📈 Weekly Report$'), send_incomes_pie_chart))
     application.add_handler(MessageHandler(filters.Regex('^📊 Yearly Report$'), generate_histogram))
+    application.add_handler(MessageHandler(filters.Regex('^🔙 Back$'), start))
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)
-    print("bot is running")
+
 
 #הרצה
 if __name__ == '__main__':
