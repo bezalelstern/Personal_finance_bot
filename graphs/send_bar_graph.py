@@ -1,32 +1,17 @@
-import matplotlib.pyplot as plt
-import os
 from telegram import Update
 from telegram.ext import CallbackContext
 
-# פונקציה ליצירת גרף בר ושליחתו לבוט
-async def create_bar_chart(update: Update, context: CallbackContext, df, x_col, y_col, title, chart_name):
-    """יצירת גרף בר ושליחתו לבוט טלגרם."""
+from graphs.graph_service.bar_graph_service import create_bar_chart
+from graphs.graph_service.data_from_db import fetch_table_data, tables
 
-    # יצירת הגרף
-    plt.figure(figsize=(10, 6))
-    plt.bar(df[x_col].dt.strftime('%Y-%m-%d'), df[y_col], color='orange')
-    plt.title(title)
-    plt.xlabel(x_col.capitalize())
-    plt.ylabel(y_col.capitalize())
 
-    # שמירת הגרף
-    chart_path = f'{chart_name}.png'
-    plt.savefig(chart_path)
-    plt.close()
+# יצירת גרפים ושליחתם לבוט
+async def generate_charts(update: Update, context: CallbackContext):
+    for title, (model, cols) in tables.items():
+        df = fetch_table_data(model, cols)
+        if not df.empty:
+            await create_bar_chart(update, context, df, 'time', 'amount', title, title.replace(" ", "_"))
+        else:
+            print(f"טבלה ריקה: {title}")
 
-    # שליחת הגרף לבוט
-    try:
-        with open(chart_path, 'rb') as photo:
-            await update.message.reply_photo(photo=photo)
-        print(f"נשלח גרף: {chart_path}")
-    except Exception as e:
-        print(f"שגיאה בשליחת הגרף: {e}")
 
-    # מחיקת הגרף לאחר השליחה
-    if os.path.exists(chart_path):
-        os.remove(chart_path)
