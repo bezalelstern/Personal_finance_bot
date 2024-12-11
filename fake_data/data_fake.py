@@ -31,11 +31,14 @@ def create_random_user():
 
 
 def create_random_category():
-    """יוצר קטגוריה רנדומלית"""
-    return Categorise(
-        category_name= random.choice(EXPENSE_CATEGORIES)
-    )
 
+    flat_categories = [category for row in EXPENSE_CATEGORIES for category in row]
+
+    random_category = random.choice(flat_categories)
+
+    return Categorise(
+        category_name=random_category.split(maxsplit=1)[-1],  # שמירת שם הקטגוריה ללא האימוג'י
+    )
 
 def create_random_fixed_income(user_id):
     """יוצר הכנסה קבועה רנדומלית"""

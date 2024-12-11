@@ -1,8 +1,10 @@
+import asyncio
 import logging
 from telegram._update import Update
-from telegram.ext import Application
+from telegram.ext import Application, ContextTypes
 from repository.postgres_repo import setup_database
 from telegram_repository.handlers import register_handlers
+from telegram_repository.main_repo import start
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,6 +25,7 @@ def main() -> None:
 #הרצה
 if __name__ == '__main__':
     main()
+
 
 
 

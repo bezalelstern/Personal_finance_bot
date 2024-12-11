@@ -16,6 +16,23 @@ help_text = (
     "- Choose the most relevant category"
 )
 
+CATEGORY_MAPPING = {
+    '🍽️ Food': 'Food',
+    '🚗 Transport': 'Transport',
+    '🏠 Rent/Utilities': 'Rent/Utilities',
+    '🛒 Groceries': 'Groceries',
+    '👗 Shopping': 'Shopping',
+    '🎉 Entertainment': 'Entertainment',
+    '🏥 Health': 'Health',
+    '📚 Education': 'Education',
+    '🚌 Public Transit': 'Public Transit',
+    '🎁 Gifts': 'Gifts',
+    '💻 Technology': 'Technology',
+    '🍺 Dining Out': 'Dining Out',
+    '🏋️ Fitness': 'Fitness',
+    '✈️ Travel': 'Travel',
+    'Other': 'Other'
+}
 welcome_text = ("Welcome to Expense Tracker Bot! 💰\n\n"
         "Track your expenses easily and get insights into your spending.\n"
         "Choose an option below to get started.")

@@ -241,8 +241,7 @@ from repository.postgres_repo import save_temporary_expenses_to_db, save_fixed_e
 from repository.postgres_repo import create_report, setup_database, save_temporary_expenses_to_db, save_fixed_expenses_to_db, create_category
 from telegram_repository.main_repo import start_timer, EXPENSE_TYPE, CATEGORY, AMOUNT
 
-from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD
-
+from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD, CATEGORY_MAPPING
 
 
 async def add_expense_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -260,9 +259,11 @@ async def add_expense_start(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     expense_type = update.message.text
     context.user_data["expense_type"] = expense_type
-    keyboard = [[category] for row in EXPENSE_CATEGORIES for category in row]
 
+    # יצירת מקלדת עם הקטגוריות
+    keyboard = EXPENSE_CATEGORIES
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
+
     await start_timer(context)
     await update.message.reply_text(
         "Please select a category for your expense 📂:",
@@ -271,8 +272,13 @@ async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     return CATEGORY
 
 async def get_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    category = update.message.text.split()[-1]      # Extract category without emoji
+    # טקסט הבחירה שהמשתמש שלח
+    selected_text = update.message.text
+
+    # המרת הטקסט לשם הקטגוריה
+    category = CATEGORY_MAPPING.get(selected_text, 'Unknown')
     context.user_data['category'] = category
+
     await start_timer(context)
     await update.message.reply_text(
         "How much was the expense? 💰\n"

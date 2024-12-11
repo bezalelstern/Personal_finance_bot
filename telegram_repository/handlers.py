@@ -5,7 +5,6 @@ from graphs.send_bar_graph import generate_bar_graph
 from graphs.send_histogram_graph import generate_histogram
 from graphs.send_line_graph import generate_line_graph
 from graphs.send_pie_graph import send_expenses_pie_chart
-from repository.postgres_repo import setup_database
 from telegram_repository.analytics_commands import send_expense_prediction
 from telegram_repository.income_repo import add_income_start, get_income_type, get_income_amount, save_income
 from telegram_repository.expense_repo import add_expense_start, get_category, save_expense, EXPENSE_TYPE, get_expense_type, handle_any_message
