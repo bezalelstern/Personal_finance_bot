@@ -2,8 +2,10 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 from datetime import datetime, timedelta
+
+from database.config_postgres import db_session
 from database.models import TemporaryExpenses, FixedExpenses
-from database.config import db_session
+
 
 class ExpenseAnalyzer:
     def __init__(self, user_id):

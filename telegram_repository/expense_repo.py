@@ -260,7 +260,8 @@ async def add_expense_start(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     expense_type = update.message.text
     context.user_data["expense_type"] = expense_type
-    keyboard = [category for category in EXPENSE_CATEGORIES]
+    keyboard = [[category] for row in EXPENSE_CATEGORIES for category in row]
+
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
     await start_timer(context)
     await update.message.reply_text(

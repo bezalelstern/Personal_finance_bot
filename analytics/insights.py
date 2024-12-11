@@ -1,6 +1,6 @@
 from collections import defaultdict
 from database.models import TemporaryExpenses, Categorise
-from database.config import db_session
+
 
 class InsightGenerator:
     def __init__(self, user_id):

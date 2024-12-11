@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from faker import Faker
 from database.models import Base, User, Categorise, FixedIncome, TemporaryIncome, TemporaryExpenses, FixedExpenses  # import המודלים שלך
+from texts import EXPENSE_CATEGORIES
 
 # אתחול של Faker לצורך יצירת נתונים רנדומליים
 fake = Faker()
@@ -32,7 +33,7 @@ def create_random_user():
 def create_random_category():
     """יוצר קטגוריה רנדומלית"""
     return Categorise(
-        category_name=fake.word()
+        category_name= random.choice(EXPENSE_CATEGORIES)
     )
 
 
