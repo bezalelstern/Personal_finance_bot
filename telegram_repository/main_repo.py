@@ -38,10 +38,10 @@ async def show_start_button(context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=reply_markup
             )
     except asyncio.CancelledError:
-        pass  # ביטול המשימה יפסיק את ההמתנה ללא שגיאה
+        pass
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    context.user_data['chat_id'] = update.effective_chat.id  # שמירה של chat_id ב-user_data
+    context.user_data['chat_id'] = update.effective_chat.id
     reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
     await start_timer(context)
     await update.message.reply_text(
@@ -51,15 +51,22 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Cancel the current conversation."""
+    context.user_data.clear()
+    context.user_data['chat_id'] = update.effective_chat.id
     reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
-    await start_timer(context)
     await update.message.reply_text(
         "Operation canceled. What would you like to do next? 🤔",
         reply_markup=reply_markup
     )
     return ConversationHandler.END
 
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
     await start_timer(context)
     await update.message.reply_text(help_text, reply_markup=reply_markup)
+
+def get_keyboard_with_cancel(options):
+
+    options_with_cancel = options + [["❌ Cancel"]]
+    return ReplyKeyboardMarkup(options_with_cancel, resize_keyboard=True, one_time_keyboard=True)

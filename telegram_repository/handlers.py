@@ -59,9 +59,11 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler('help', help_command))
 
     # Add message handlers for reports
+    application.add_handler(MessageHandler(filters.Regex('^❓ Help'), help_command))
     application.add_handler(MessageHandler(filters.Regex('^📊 Report$'), generate_report))
     application.add_handler(MessageHandler(filters.Regex('^📅 Daily Report$'), generate_bar_graph))
     application.add_handler(MessageHandler(filters.Regex('^📉 Monthly Report$'), send_expenses_pie_chart))
     application.add_handler(MessageHandler(filters.Regex('^📈 Weekly Report$'), generate_line_graph))
     application.add_handler(MessageHandler(filters.Regex('^📊 Yearly Report$'), send_expense_prediction))
     application.add_handler(MessageHandler(filters.Regex('^🔙 Back$'), start))
+    application.add_handler(CommandHandler('cancel', cancel))

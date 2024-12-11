@@ -1,15 +1,13 @@
 from telegram.ext import ContextTypes, ConversationHandler
-
 from repository.postgres_repo import save_temporary_income_to_db, save_fixed_income_to_db
 from telegram import Update, ReplyKeyboardMarkup
-
-from telegram_repository.main_repo import INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION
+from telegram_repository.main_repo import INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION, cancel
 from texts import MAIN_KEYBOARD
 
 
 async def add_income_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start adding an income."""
-    income_types = [['Fixed Income', 'Temporary Income']]
+    income_types = [["Fixed Expense", "Temporary Expense"],["❌ Cancel"]]
     reply_markup = ReplyKeyboardMarkup(income_types, resize_keyboard=True, one_time_keyboard=True)
 
     await update.message.reply_text(
@@ -22,6 +20,8 @@ async def add_income_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 async def get_income_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Store the income type and ask for the amount."""
     context.user_data['income_type'] = update.message.text
+    if context.user_data['income_type'] == "❌ Cancel":
+        return await cancel(update, context)
     await update.message.reply_text("How much was the income?")
     return INCOME_AMOUNT
 

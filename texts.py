@@ -3,7 +3,8 @@ EXPENSE_CATEGORIES = [
     ['🛒 Groceries', '👗 Shopping', '🎉 Entertainment'],
     ['🏥 Health', '📚 Education', '🚌 Public Transit'],
     ['🎁 Gifts', '💻 Technology', '🍺 Dining Out'],
-    ['🏋️ Fitness', '✈️ Travel', 'Other']
+    ['🏋️ Fitness', '✈️ Travel', 'Other'],
+    ['❌ Cancel']
 ]
 
 help_text = (
