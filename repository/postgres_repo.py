@@ -1,8 +1,11 @@
+import csv
 from datetime import datetime
+
+import pandas as pd
+
 from database.models import User, Categorise, FixedIncome, TemporaryIncome, init_db, FixedExpenses, TemporaryExpenses
-from database.config_postgres import db_session
-
-
+from database.config_postgres import db_session, engine
+from graphs.graph_service.data_from_db import session
 
 
 def setup_database():
@@ -91,3 +94,42 @@ def save_temporary_income_to_db(user_id, amount,description):
     db_session.commit()
 
     return temporary_income
+
+
+def get_or_create_category(category_name):
+    category = session.query(Categorise).filter_by(category_name=category_name).first()
+    if not category:
+        category = Categorise(category_name=category_name)
+        session.add(category)
+        session.commit()  # שמירה מיידית כדי לקבל ID
+    return category.id
+
+
+
+def insert_new_expense(csv_file_path):
+    with open(csv_file_path, "r", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            try:
+                date = datetime.strptime(row["date"], "%Y-%m-%d")
+                category_id = get_or_create_category(row["category"])
+                temp_expense = TemporaryExpenses(
+                    user_id=6768207848,
+                    category_id=category_id,
+                    amount=int(row["amount"]),
+                    time=date
+                )
+                session.add(temp_expense)
+            except Exception as e:
+                print(f"Error processing row {row}: {e}")
+    try:
+        session.commit()
+        print("Data successfully inserted into the database!")
+    except Exception as e:
+        session.rollback()
+        print(f"Error committing session: {e}")
+    finally:
+        session.close()
+
+
+
