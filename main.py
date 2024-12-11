@@ -4,12 +4,12 @@ import threading
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ConversationHandler, CallbackContext, \
     ContextTypes
-
 from graphs.send_bar_graph import generate_bar_graph
 from graphs.send_histogram_graph import generate_histogram
 from graphs.send_pie_graph import send_expenses_pie_chart, send_incomes_pie_chart
+from repository.mongo_repo import get_news_from_last_week
+from repository.postgres_repo import setup_database
 from telegram_repository.income_repo import add_income_start, get_income_type, get_income_amount, save_income
-from repository.db import  setup_database
 from telegram_repository.expense_repo import add_expense_start, get_category, save_expense, cancel, start, help_command, \
     CATEGORY, AMOUNT, INCOME_TYPE, INCOME_DESCRIPTION, INCOME_AMOUNT, EXPENSE_TYPE, get_expense_type
 
@@ -20,7 +20,18 @@ logger = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("telegram").setLevel(logging.WARNING)
 
+async def search_news(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("Please enter a keyword to search for news:")
 
+async def get_news(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    keyword = update.message.text
+    print(keyword)
+    articles = get_news_from_last_week(keyword)
+    if articles:
+        for article in articles[:5]:
+            await update.message.reply_text(article)
+    else:
+        await update.message.reply_text("No news articles found for this keyword.")
 
 def main(get_expence_type=None) -> None:
     """Run the bot."""
@@ -56,7 +67,9 @@ def main(get_expence_type=None) -> None:
     # Register handlers
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('help', help_command))
-    # application.add_handler(CommandHandler('news', pickwords ))
+    application.add_handler(CommandHandler('news', get_news_from_last_week ))
+    application.add_handler(MessageHandler(filters.Regex('^Search News$'), search_news))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, get_news))
     application.add_handler(conv_handler_expense)
     application.add_handler(conv_handler_income)
     application.add_handler(MessageHandler(filters.Regex('^📊 Report$'), generate_report))

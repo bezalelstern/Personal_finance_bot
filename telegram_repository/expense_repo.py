@@ -237,7 +237,7 @@ import asyncio
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, ConversationHandler
 
-from repository.db import save_temporary_expenses_to_db, save_fixed_expenses_to_db
+from repository.postgres_repo import save_temporary_expenses_to_db, save_fixed_expenses_to_db
 from repository.postgres_repo import create_report, setup_database, save_temporary_expenses_to_db, save_fixed_expenses_to_db, create_category
 
 from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD
@@ -263,7 +263,7 @@ async def start_timer(context: ContextTypes.DEFAULT_TYPE):
 
 async def show_start_button(context: ContextTypes.DEFAULT_TYPE):
     try:
-        await asyncio.sleep(10)  # זמן המתנה של 10 שניות (ניתן לשינוי)
+        await asyncio.sleep(30)  # זמן המתנה של 10 שניות (ניתן לשינוי)
         keyboard = [["/start"]]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
@@ -326,7 +326,7 @@ async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     return CATEGORY
 
 async def get_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    category = update.message.text.split()[-1]  # Extract category without emoji
+    category = update.message.text.split()[-1]      # Extract category without emoji
     context.user_data['category'] = category
     await start_timer(context)
     await update.message.reply_text(

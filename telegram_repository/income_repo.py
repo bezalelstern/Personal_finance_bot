@@ -1,6 +1,6 @@
 from telegram.ext import ContextTypes, ConversationHandler
 
-from repository.db import save_temporary_income_to_db, save_fixed_income_to_db
+from repository.postgres_repo import save_temporary_income_to_db, save_fixed_income_to_db
 from telegram_repository.expense_repo import INCOME_TYPE, INCOME_DESCRIPTION, INCOME_AMOUNT
 from telegram import Update, ReplyKeyboardMarkup
 

@@ -18,7 +18,7 @@ def get_news_from_last_week(keyword):
         return news_list
 
     except Exception as e:
-        return "Error"
+        return str(e)
 
 
 if __name__ == "__main__":
