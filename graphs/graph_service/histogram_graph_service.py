@@ -7,10 +7,10 @@ from telegram.ext import CallbackContext
 # פונקציה ליצירת היסטוגרמה
 async def create_graph_histogram(update: Update, context: CallbackContext, df, x_col, y_col, title, chart_name):
     plt.figure(figsize=(10, 6))
-    plt.hist(df[x_col].dt.strftime('%Y-%m-%d'), df[y_col],bins=5, color='orange')
+    plt.hist(df[x_col].dt.strftime('%Y-%m-%d'), bins=5, color='orange')
     plt.title(title)
     plt.xlabel(x_col.capitalize())
-    plt.ylabel(y_col.capitalize())
+    plt.ylabel("Count")
 
     # שמירת הגרף
     chart_path = f'{chart_name}.png'

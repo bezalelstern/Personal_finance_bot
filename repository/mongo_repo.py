@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-
 from database.config_mongo import collection
 
 def get_news_from_last_week(keyword):
