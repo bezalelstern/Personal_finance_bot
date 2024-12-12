@@ -5,9 +5,10 @@ from telegram.ext import CallbackContext
 async def generate_report(update: Update, context: CallbackContext) -> None:
     """Display a menu with 5 buttons for report options."""
     reply_keyboard = [
-        ['📅 Daily Report', '📈 Weekly Report'],
-        ['📉 Monthly Report', '📊 Yearly Report'],
-        ['🔙 Back', 'advance']
+        ['📉 Expense pie graph', '📈 Line graph'],
+        ['📈 histogram graph', '📅 Export csv file'],
+        ["📊 Expense Prediction","💡 Savings Insights"],
+        ['🔙 Back']
     ]
     markup = ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True,one_time_keyboard=True)
 

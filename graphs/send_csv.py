@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 import os
 from graphs.graph_service.data_from_db import fetch_table_data, tables
-
+from telegram_repository.analize_repo import generate_report
 
 
 # פונקציה לשמירת הנתונים כקובץ CSV
@@ -18,6 +18,7 @@ async def send_expenses_csv(update: Update, context: CallbackContext) -> None:
     # שליחת הקובץ
     with open(csv_filename, 'rb') as file:
         await update.message.reply_document(document=file)
+    await generate_report(update, context)
 
     # מחיקת הקובץ אחרי שליחה
     os.remove(csv_filename)

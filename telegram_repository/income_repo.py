@@ -7,7 +7,7 @@ from texts import MAIN_KEYBOARD
 
 async def add_income_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start adding an income."""
-    income_types = [["Fixed Expense", "Temporary Expense"],["❌ Cancel"]]
+    income_types = [["Fixed Income", "Temporary Income"],["❌ Cancel"]]
     reply_markup = ReplyKeyboardMarkup(income_types, resize_keyboard=True, one_time_keyboard=True)
 
     await update.message.reply_text(
