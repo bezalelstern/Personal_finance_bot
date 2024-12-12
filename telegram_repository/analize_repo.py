@@ -7,6 +7,7 @@ async def generate_report(update: Update, context: CallbackContext) -> None:
     reply_keyboard = [
         ['📅 Daily Report', '📈 Weekly Report'],
         ['📉 Monthly Report', '📊 Yearly Report'],
+        ['📊 Expense Prediction','💡 Savings Insights'],
         ['🔙 Back', 'advance']
     ]
     markup = ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True,one_time_keyboard=True)
