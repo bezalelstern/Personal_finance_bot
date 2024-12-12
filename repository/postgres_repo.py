@@ -104,7 +104,7 @@ def get_or_create_category(category_name):
 
 
 
-def insert_new_expense(csv_file_path):
+def insert_new_expense(csv_file_path,user_id):
     with open(csv_file_path, "r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         for row in reader:
@@ -112,7 +112,7 @@ def insert_new_expense(csv_file_path):
                 date = datetime.strptime(row["date"], "%Y-%m-%d")
                 category_id = get_or_create_category(row["category"])
                 temp_expense = TemporaryExpenses(
-                    user_id=6768207848,
+                    user_id=user_id,
                     category_id=category_id,
                     amount=int(row["amount"]),
                     time=date
@@ -131,7 +131,7 @@ def insert_new_expense(csv_file_path):
 
 
 def export_to_csv_with_source_and_user(user_id, record_type):
-    output_csv = f"C:\\Users\\c0548\\PycharmProjects\\Personal_finance_bots\\csv_files\\{user_id}_{record_type}.csv"
+    output_csv = f"C:\\Users\\internet\\PycharmProjects\\Personal_finance_bot\\csv_files\\{user_id}_{record_type}.csv"
     try:
         fixed_records, temporary_records, source_types, categories = get_records_and_categories(session, user_id,
                                                                                                 record_type)
@@ -204,4 +204,8 @@ def delete_file(file_path):
     except Exception as e:
         print(f"Error deleting file: {e}")
 
+user_id = 5451883767
 
+a = export_to_csv_with_source_and_user(user_id, record_type='incomes')
+print(a)
+delete_file(a)

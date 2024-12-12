@@ -13,6 +13,8 @@ from telegram_repository.main_repo import CATEGORY, AMOUNT, cancel, INCOME_TYPE,
     start, help_command
 from telegram_repository.news_repo import search_news, get_news
 
+
+
 def register_handlers(application: Application) -> None:
     """Register all handlers to the application."""
     conv_handler_expense = ConversationHandler(

@@ -133,9 +133,9 @@ async def process_csv(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         # Download the file to the local system
         file_obj = await context.bot.get_file(file.file_id)
         downloaded_file = await file_obj.download_to_drive()  # הורדה למערכת המקומית
-
+        id = update.effective_user.id
         # Process the file
-        insert_new_expense(downloaded_file)
+        insert_new_expense(downloaded_file,id)
         await update.message.reply_text("✅ All expenses from the CSV were saved successfully!")
         return ConversationHandler.END
 
