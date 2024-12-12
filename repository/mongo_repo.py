@@ -1,6 +1,5 @@
 import base64
 from datetime import datetime, timedelta
-
 from database.config_mongo import collection
 
 

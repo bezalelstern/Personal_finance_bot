@@ -3,8 +3,12 @@ from telegram import ReplyKeyboardMarkup, Update
 from telegram.ext import ContextTypes, ConversationHandler
 from texts import MAIN_KEYBOARD, help_text, welcome_text
 
+
+from texts import MAIN_KEYBOARD, help_text, welcome_text
+
 INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION = range(3)
 EXPENSE_TYPE, CATEGORY, AMOUNT = range(3)
+
 timer_task = None
 
 def reset_timer(context):

@@ -13,7 +13,9 @@ async def send_expenses_pie_chart(update: Update, context: CallbackContext) -> N
     df = fetch_data_by_category(TemporaryExpenses)
 
     # שליחת הגרף
+
     await send_pie_chart(update, context, df, 'Expenses by categories', 'pie_chart.png')
+
     close_session()
 
 
