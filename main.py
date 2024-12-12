@@ -4,6 +4,7 @@ from telegram.ext import Application
 from repository.postgres_repo import setup_database
 from telegram_repository.handlers import register_handlers
 
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -13,7 +14,7 @@ def main() -> None:
     """Run the bot."""
     setup_database()
     print("Bot is running")
-    application = Application.builder().token('7349809392:AAHRKfATE1rMImHVejkOeF1Y9afAZz4HE6w').build()
+    application = Application.builder().token('6711004481:AAEzQpRWYt4txfW4E19Ai3i47P89qbSZRho').build()
     register_handlers(application)
     try:
         application.run_polling(allowed_updates=Update.ALL_TYPES)
@@ -23,6 +24,7 @@ def main() -> None:
 #הרצה
 if __name__ == '__main__':
     main()
+
 
 
 

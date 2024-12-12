@@ -1,6 +1,7 @@
+import base64
 from datetime import datetime, timedelta
-
 from database.config_mongo import collection
+
 
 def get_news_from_last_week(keyword):
     try:
@@ -14,7 +15,13 @@ def get_news_from_last_week(keyword):
 
         news_list = list(results)
         print("Raw data:", news_list)
-        processed_list = [i for i in news_list]
+        processed_list = [
+            {
+                **i,
+                "image_data": base64.b64decode(i["image_data"]) if "image_data" in i else None
+            }
+            for i in news_list
+        ]
         print("Processed data:", processed_list)
 
         return processed_list
@@ -23,8 +30,11 @@ def get_news_from_last_week(keyword):
         print(f"Conversion error: {e}")
         return []
 
+
+
+
 if __name__ == "__main__":
-    news = get_news_from_last_week("כיי")
+    news = get_news_from_last_week("שטראוס")
     print("News from the last week:")
     for item in news:
         print(item)
