@@ -6,7 +6,6 @@ from database.config_postgres import db_session, engine
 from graphs.graph_service.data_from_db import session
 import os
 
-
 def setup_database():
     init_db()
     print("Connected to database and database is ready.")
@@ -129,10 +128,6 @@ def insert_new_expense(csv_file_path):
         print(f"Error committing session: {e}")
     finally:
         session.close()
-
-
-csv_file = "C:\\Users\\c0548\\PycharmProjects\\Personal_finance_bots\\february-2024.csv"
-insert_new_expense(csv_file)
 
 
 def export_to_csv_with_source_and_user(user_id, record_type):

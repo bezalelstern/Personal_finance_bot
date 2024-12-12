@@ -7,7 +7,6 @@ from telegram_repository.main_repo import cancel
 async def search_news(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     reply_markup = ReplyKeyboardMarkup([["❌ Cancel"]], resize_keyboard=True)
     await update.message.reply_text("Please enter a keyword to search for news:", reply_markup=reply_markup)
-
     return 1
 
 async def get_news(update: Update, context: ContextTypes.DEFAULT_TYPE):

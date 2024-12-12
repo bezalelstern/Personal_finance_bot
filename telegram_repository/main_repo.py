@@ -1,8 +1,6 @@
 import asyncio
-
 from telegram import ReplyKeyboardMarkup, Update
 from telegram.ext import ContextTypes, ConversationHandler
-
 from texts import MAIN_KEYBOARD, help_text, welcome_text
 
 EXPENSE_TYPE, CATEGORY, AMOUNT, INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION = range(6)
@@ -26,7 +24,7 @@ async def start_timer(context: ContextTypes.DEFAULT_TYPE):
 
 async def show_start_button(context: ContextTypes.DEFAULT_TYPE):
     try:
-        await asyncio.sleep(30)  # זמן המתנה של 10 שניות (ניתן לשינוי)
+        await asyncio.sleep(40)
         keyboard = [["/start"]]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
@@ -41,6 +39,7 @@ async def show_start_button(context: ContextTypes.DEFAULT_TYPE):
         pass
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    context.user_data.clear()
     context.user_data['chat_id'] = update.effective_chat.id
     reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
     await start_timer(context)
@@ -66,7 +65,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     await start_timer(context)
     await update.message.reply_text(help_text, reply_markup=reply_markup)
 
-def get_keyboard_with_cancel(options):
 
+def get_keyboard_with_cancel(options):
     options_with_cancel = options + [["❌ Cancel"]]
     return ReplyKeyboardMarkup(options_with_cancel, resize_keyboard=True, one_time_keyboard=True)
