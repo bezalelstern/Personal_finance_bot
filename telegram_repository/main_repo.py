@@ -1,11 +1,14 @@
 import asyncio
-
 from telegram import ReplyKeyboardMarkup, Update
 from telegram.ext import ContextTypes, ConversationHandler
+from texts import MAIN_KEYBOARD, help_text, welcome_text
+
 
 from texts import MAIN_KEYBOARD, help_text, welcome_text
 
-EXPENSE_TYPE, CATEGORY, AMOUNT, INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION = range(6)
+INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION = range(3)
+EXPENSE_TYPE, CATEGORY, AMOUNT = range(3)
+
 timer_task = None
 
 def reset_timer(context):
@@ -26,7 +29,7 @@ async def start_timer(context: ContextTypes.DEFAULT_TYPE):
 
 async def show_start_button(context: ContextTypes.DEFAULT_TYPE):
     try:
-        await asyncio.sleep(30)  # זמן המתנה של 10 שניות (ניתן לשינוי)
+        await asyncio.sleep(40)
         keyboard = [["/start"]]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
@@ -38,10 +41,11 @@ async def show_start_button(context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=reply_markup
             )
     except asyncio.CancelledError:
-        pass  # ביטול המשימה יפסיק את ההמתנה ללא שגיאה
+        pass
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    context.user_data['chat_id'] = update.effective_chat.id  # שמירה של chat_id ב-user_data
+    context.user_data.clear()
+    context.user_data['chat_id'] = update.effective_chat.id
     reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
     await start_timer(context)
     await update.message.reply_text(
@@ -51,15 +55,22 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Cancel the current conversation."""
+    context.user_data.clear()
+    context.user_data['chat_id'] = update.effective_chat.id
     reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
-    await start_timer(context)
     await update.message.reply_text(
         "Operation canceled. What would you like to do next? 🤔",
         reply_markup=reply_markup
     )
     return ConversationHandler.END
 
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
     await start_timer(context)
     await update.message.reply_text(help_text, reply_markup=reply_markup)
+
+
+def get_keyboard_with_cancel(options):
+    options_with_cancel = options + [["❌ Cancel"]]
+    return ReplyKeyboardMarkup(options_with_cancel, resize_keyboard=True, one_time_keyboard=True)
