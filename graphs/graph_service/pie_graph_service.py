@@ -9,23 +9,26 @@ async def send_pie_chart(update, context, df: pd.DataFrame, title: str, chart_fi
     """שליחת גרף עוגה כללי."""
 
     if not df.empty:
+        # קיבוץ לפי קטגוריה וסיכום הסכומים
+        df_grouped = df.groupby('category', as_index=False)['amount'].sum()
+
         # יצירת גרף עוגה
         plt.figure(figsize=(10, 8))
-        explode = [0.1] + [0] * (len(df['category']) - 1)  # הדגשת הפריט הראשון
+        explode = [0.1] + [0] * (len(df_grouped['category']) - 1)  # הדגשת הפריט הראשון
         colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6']
 
         wedges, texts, autotexts = plt.pie(
-            df['amount'],
-            labels=df['category'],
+            df_grouped['amount'],
+            labels=df_grouped['category'],
             autopct='%1.1f%%',
             startangle=90,
-            colors=colors[:len(df['category'])],
+            colors=colors[:len(df_grouped['category'])],
             explode=explode
         )
         plt.title(title, fontsize=16, fontweight='bold')
 
         # הוספת מקרא אם לא קיים
-        plt.legend(wedges, df['category'], title="category", loc="best", bbox_to_anchor=(0.85, 0.1, 0.5, 1))
+        plt.legend(wedges, df_grouped['category'], title="category", loc="best", bbox_to_anchor=(0.85, 0.1, 0.5, 1))
 
         # שמירת התמונה
         plt.savefig(chart_filename, bbox_inches='tight')
@@ -44,5 +47,4 @@ async def send_pie_chart(update, context, df: pd.DataFrame, title: str, chart_fi
                 os.remove(chart_filename)
     else:
         print(f"לא נמצאו נתונים עבור: {title}")
-
 
