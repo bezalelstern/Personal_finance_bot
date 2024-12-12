@@ -1,6 +1,5 @@
 import csv
 from datetime import datetime
-import pandas as pd
 from database.models import User, Categorise, FixedIncome, TemporaryIncome, init_db, FixedExpenses, TemporaryExpenses
 from database.config_postgres import db_session, engine
 from graphs.graph_service.data_from_db import session
@@ -99,12 +98,13 @@ def get_or_create_category(category_name):
     if not category:
         category = Categorise(category_name=category_name)
         session.add(category)
-        session.commit()  # שמירה מיידית כדי לקבל ID
+        session.commit()
     return category.id
 
 
 
-def insert_new_expense(csv_file_path,user_id):
+def insert_new_expense(csv_file_path,user):
+    user_id = db_session.query(User).get(user) or create_report(user)
     with open(csv_file_path, "r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         for row in reader:
@@ -112,7 +112,7 @@ def insert_new_expense(csv_file_path,user_id):
                 date = datetime.strptime(row["date"], "%Y-%m-%d")
                 category_id = get_or_create_category(row["category"])
                 temp_expense = TemporaryExpenses(
-                    user_id=user_id,
+                    user_id=user_id.id,
                     category_id=category_id,
                     amount=int(row["amount"]),
                     time=date
@@ -129,9 +129,8 @@ def insert_new_expense(csv_file_path,user_id):
     finally:
         session.close()
 
-
 def export_to_csv_with_source_and_user(user_id, record_type):
-    output_csv = f"C:\\Users\\internet\\PycharmProjects\\Personal_finance_bot\\csv_files\\{user_id}_{record_type}.csv"
+    output_csv = f"C:\\Users\\c0548\\PycharmProjects\\Personal_finance_bots\\csv_files\\{user_id}_{record_type}.csv"
     try:
         fixed_records, temporary_records, source_types, categories = get_records_and_categories(session, user_id,
                                                                                                 record_type)
@@ -204,8 +203,8 @@ def delete_file(file_path):
     except Exception as e:
         print(f"Error deleting file: {e}")
 
-user_id = 5451883767
-
-a = export_to_csv_with_source_and_user(user_id, record_type='incomes')
-print(a)
-delete_file(a)
+# user_id = 5451883767
+#
+# a = export_to_csv_with_source_and_user(user_id, record_type='incomes')
+# print(a)
+# delete_file(a)
