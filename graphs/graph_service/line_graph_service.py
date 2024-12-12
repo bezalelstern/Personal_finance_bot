@@ -11,6 +11,9 @@ async def create_line_chart(update: Update, context: CallbackContext, df, x_col,
     plt.title(title)
     plt.xlabel(x_col.capitalize())
     plt.ylabel(y_col.capitalize())
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.legend(loc='best', fontsize=10, frameon=True, shadow=True)
+    plt.tight_layout()
 
     # שמירת הגרף
     chart_path = f'{chart_name}.png'
