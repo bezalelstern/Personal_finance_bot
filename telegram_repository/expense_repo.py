@@ -3,12 +3,11 @@ from telegram.ext import ContextTypes, ConversationHandler
 from repository.postgres_repo import  insert_new_expense
 from repository.postgres_repo import save_temporary_expenses_to_db, save_fixed_expenses_to_db
 from telegram_repository.main_repo import start_timer, EXPENSE_TYPE, CATEGORY, AMOUNT, cancel
-from texts import help_text, EXPENSE_CATEGORIES, welcome_text, MAIN_KEYBOARD, CATEGORY_MAPPING
+from texts import EXPENSE_CATEGORIES,MAIN_KEYBOARD, CATEGORY_MAPPING
 
 
 async def add_expense_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start the process of adding an expense or uploading a CSV file."""
-    context.user_data.clear()
     types = [["Fixed Expense", "Temporary Expense"], ["📂 Upload CSV"], ["❌ Cancel"]]
     await start_timer(context)
     reply_markup = ReplyKeyboardMarkup(types, resize_keyboard=True, one_time_keyboard=True)
@@ -27,16 +26,16 @@ async def handle_expense_choice(update: Update, context: ContextTypes.DEFAULT_TY
         return await upload_csv(update, context)
     elif choice in ["Fixed Expense", "Temporary Expense"]:
         context.user_data["expense_type"] = choice
-        return await get_expense_type(update, context)
+        return await get_expense_type(update, context, choice)
     elif choice == "❌ Cancel":
         return await cancel(update, context)
     else:
         await update.message.reply_text("Invalid option. Please try again.")
         return EXPENSE_TYPE
 
-async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    expense_type = update.message.text
-
+async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE, chice) -> int:
+    expense_type = chice
+    print(chice)
     context.user_data["expense_type"] = expense_type
 
     # יצירת מקלדת עם הקטגוריות
@@ -52,13 +51,12 @@ async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 async def get_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     # טקסט הבחירה שהמשתמש שלח
+    print(" jhbvsj")
     selected_text = update.message.text
     print(selected_text)
     if selected_text == "❌ Cancel":
         return await cancel(update, context)
 
-
-    # המרת הטקסט לשם הקטגוריה
     category = CATEGORY_MAPPING.get(selected_text, 'Unknown')
 
 
@@ -79,6 +77,7 @@ async def save_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
         user_id = update.effective_user.id
         category = context.user_data['category']
+        print(category)
         expense_type = context.user_data['expense_type']
 
         if expense_type == 'Fixed Expense':
@@ -116,7 +115,7 @@ async def upload_csv(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         "Please upload a CSV file containing your expenses. 📄",
         reply_markup=ReplyKeyboardRemove()
     )
-    return 1
+    return 4
 
 async def process_csv(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Process the uploaded CSV file and save the data."""

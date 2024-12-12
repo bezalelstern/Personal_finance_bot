@@ -7,8 +7,7 @@ from graphs.send_line_graph import generate_line_graph
 from graphs.send_pie_graph import send_expenses_pie_chart
 from telegram_repository.analytics_commands import send_expense_prediction
 from telegram_repository.income_repo import add_income_start, get_income_type, get_income_amount, save_income
-from telegram_repository.expense_repo import add_expense_start, get_category, save_expense, EXPENSE_TYPE, \
-    get_expense_type, handle_any_message, upload_csv, process_csv, handle_expense_choice
+from telegram_repository.expense_repo import add_expense_start, get_category, save_expense, EXPENSE_TYPE, process_csv, handle_expense_choice
 from telegram_repository.analize_repo import generate_report
 from telegram_repository.main_repo import CATEGORY, AMOUNT, cancel, INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION, \
     start, help_command
@@ -28,7 +27,7 @@ def register_handlers(application: Application) -> None:
             AMOUNT: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, save_expense)
             ],
-            1: [
+            4: [
                 MessageHandler(filters.Document.ALL, process_csv)
             ],
         },
