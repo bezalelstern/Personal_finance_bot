@@ -38,7 +38,7 @@ class ExpenseAnalyzer:
             # עיבוד הנתונים לפורמט מתאים למודל
             df['month'] = df['date'].dt.month
             monthly_expenses = df.groupby('month')['amount'].sum().reset_index()
-            if len(monthly_expenses) < 2:
+            if len(monthly_expenses) < 1:
                 print("Not enough historical data for prediction")
                 return None
             X = monthly_expenses['month'].values.reshape(-1, 1)

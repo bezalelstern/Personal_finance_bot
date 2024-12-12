@@ -44,8 +44,8 @@ class InsightGenerator:
             # זיהוי קטגוריות עם הוצאות גבוהות
             if expenses['food'] > 2000:
                 insights.append("💡 We identified high spending on food. Consider cooking at home.")
-            if expenses['entertainment'] > 1000:
-                insights.append("💡 You can save on entertainment by looking for deals and discounts.")
+            # if expenses['Entertainment'] > 1000:
+            #     insights.append("💡 You can save on entertainment by looking for deals and discounts.")
             return insights
         except Exception as e:
             print(f"Error generating savings opportunities: {e}")
