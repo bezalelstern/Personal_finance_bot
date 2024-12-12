@@ -29,7 +29,7 @@ async def start_timer(context: ContextTypes.DEFAULT_TYPE):
 
 async def show_start_button(context: ContextTypes.DEFAULT_TYPE):
     try:
-        await asyncio.sleep(40)
+        await asyncio.sleep(100)
         keyboard = [["/start"]]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
@@ -37,7 +37,6 @@ async def show_start_button(context: ContextTypes.DEFAULT_TYPE):
         if chat_id:
             await context.bot.send_message(
                 chat_id=chat_id,
-                text="Start over by clicking the button below:",
                 reply_markup=reply_markup
             )
     except asyncio.CancelledError:
@@ -50,6 +49,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await start_timer(context)
     await update.message.reply_text(
         welcome_text,
+        reply_markup=reply_markup
+    )
+
+async def back(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    context.user_data.clear()
+    context.user_data['chat_id'] = update.effective_chat.id
+    reply_markup = ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
+    await start_timer(context)
+    await update.message.reply_text(
+        text = "start again",
         reply_markup=reply_markup
     )
 

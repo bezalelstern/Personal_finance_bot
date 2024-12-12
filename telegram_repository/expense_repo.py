@@ -2,7 +2,8 @@ from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ContextTypes, ConversationHandler
 from repository.postgres_repo import  insert_new_expense
 from repository.postgres_repo import save_temporary_expenses_to_db, save_fixed_expenses_to_db
-from telegram_repository.main_repo import start_timer, EXPENSE_TYPE, CATEGORY, AMOUNT, cancel
+from telegram_repository.csv_service import upload_csv
+from telegram_repository.main_repo import start_timer, EXPENSE_TYPE, CATEGORY, AMOUNT, cancel, start, back
 from texts import EXPENSE_CATEGORIES,MAIN_KEYBOARD, CATEGORY_MAPPING
 
 
@@ -34,11 +35,7 @@ async def handle_expense_choice(update: Update, context: ContextTypes.DEFAULT_TY
         return EXPENSE_TYPE
 
 async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE, chice) -> int:
-    expense_type = chice
-    print(chice)
-    context.user_data["expense_type"] = expense_type
-
-    # יצירת מקלדת עם הקטגוריות
+    context.user_data["expense_type"] = chice
     keyboard = EXPENSE_CATEGORIES
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
 
@@ -50,8 +47,6 @@ async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE, c
     return CATEGORY
 
 async def get_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    # טקסט הבחירה שהמשתמש שלח
-    print(" jhbvsj")
     selected_text = update.message.text
     print(selected_text)
     if selected_text == "❌ Cancel":
@@ -109,39 +104,5 @@ async def handle_any_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await start_timer(context)
 
 
-async def upload_csv(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Prompt the user to upload a CSV file."""
-    await update.message.reply_text(
-        "Please upload a CSV file containing your expenses. 📄",
-        reply_markup=ReplyKeyboardRemove()
-    )
-    return 4
 
-async def process_csv(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Process the uploaded CSV file and save the data."""
-    try:
-        # Ensure a file is uploaded
-        if not update.message.document:
-            await update.message.reply_text("No file was uploaded. Please upload a CSV file.")
-            return 1
-
-        file = update.message.document
-        if file.mime_type != 'text/csv':
-            await update.message.reply_text("The file is not a CSV. Please upload a valid CSV file.")
-            return 1
-
-        # Download the file to the local system
-        file_obj = await context.bot.get_file(file.file_id)
-        downloaded_file = await file_obj.download_to_drive()  # הורדה למערכת המקומית
-        id = update.effective_user.id
-        # Process the file
-        insert_new_expense(downloaded_file,id)
-        await update.message.reply_text("✅ All expenses from the CSV were saved successfully!")
-        return ConversationHandler.END
-
-    except Exception as e:
-        await update.message.reply_text(
-            f"An error occurred while processing the file: {str(e)}"
-        )
-        return 1
 

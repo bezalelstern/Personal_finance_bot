@@ -4,6 +4,9 @@ from analytics.predictions import ExpenseAnalyzer
 from analytics.insights import InsightGenerator
 import matplotlib.pyplot as plt
 
+from telegram_repository.analize_repo import generate_report
+from telegram_repository.main_repo import back
+
 
 async def send_expense_prediction(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send expense prediction."""
@@ -15,14 +18,15 @@ async def send_expense_prediction(update: Update, context: ContextTypes.DEFAULT_
         await update.message.reply_text(
             "📊 We couldn't predict next month's expenses. Please add more data."
         )
-        return
+        return   await generate_report(update, context)
+
 
     patterns = analyzer.identify_spending_patterns()
     if not patterns:
         await update.message.reply_text(
             "📊 No spending patterns identified. Make sure you have provided historical data."
         )
-        return
+        return   await generate_report(update, context)
 
     message = (
         f"📊 *Expense Prediction for Next Month:*\n"
@@ -34,7 +38,7 @@ async def send_expense_prediction(update: Update, context: ContextTypes.DEFAULT_
     )
 
     await update.message.reply_text(message, parse_mode='Markdown')
-
+    await generate_report(update, context)
 
 async def send_savings_insights(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send savings insights."""
@@ -58,3 +62,4 @@ async def send_savings_insights(update: Update, context: ContextTypes.DEFAULT_TY
             message += f"• {row['date'].strftime('%d/%m/%Y')}: ₪{row['amount']:,.2f}\n"
 
     await update.message.reply_text(message, parse_mode='Markdown')
+    await generate_report(update, context)
