@@ -5,7 +5,7 @@ from graphs.send_bar_graph import generate_bar_graph
 from graphs.send_histogram_graph import generate_histogram
 from graphs.send_line_graph import generate_line_graph
 from graphs.send_pie_graph import send_expenses_pie_chart
-from telegram_repository.analytics_commands import send_expense_prediction
+
 from telegram_repository.income_repo import add_income_start, get_income_type, get_income_amount, save_income
 from telegram_repository.expense_repo import add_expense_start, get_category, save_expense, EXPENSE_TYPE, process_csv, handle_expense_choice
 from telegram_repository.analize_repo import generate_report
@@ -65,7 +65,7 @@ def register_handlers(application: Application) -> None:
     application.add_handler(conv_handler_income)
     application.add_handler(conv_handler_news)
 
-    # Add simple command handlers
+    # Add simple command handlersס
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('help', help_command))
 
@@ -77,4 +77,11 @@ def register_handlers(application: Application) -> None:
     application.add_handler(MessageHandler(filters.Regex('^📈 Weekly Report$'), generate_line_graph))
     application.add_handler(MessageHandler(filters.Regex('^📊 Yearly Report$'), send_expense_prediction))
     application.add_handler(MessageHandler(filters.Regex('^🔙 Back$'), start))
+
+    # New analytics features
+    # application.add_handler(MessageHandler(filters.Regex('^📊 Expense Prediction$'), send_expense_prediction))
+    # application.add_handler(MessageHandler(filters.Regex('^💡 Savings Insights$'), send_savings_insights))
+
+
     application.add_handler(CommandHandler('cancel', cancel))
+
