@@ -15,8 +15,3 @@ async def generate_report(update: Update, context: CallbackContext) -> None:
         "Please choose a report type:",
         reply_markup=markup
     )
-
-async def advance(update: Update, context: CallbackContext) -> None:
-    reply_keyboard = [
-        []
-    ]

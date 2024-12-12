@@ -1,8 +1,5 @@
 import csv
 from datetime import datetime
-
-import pandas as pd
-
 from database.models import User, Categorise, FixedIncome, TemporaryIncome, init_db, FixedExpenses, TemporaryExpenses
 from database.config_postgres import db_session, engine
 from graphs.graph_service.data_from_db import session
