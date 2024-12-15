@@ -65,6 +65,9 @@ Personal_finance_bot/
    ```bash
    pip install -r requirements.txt
    ```
+   ```bash
+   docker-compose up -d
+   ```
 
 
 ## שימוש
