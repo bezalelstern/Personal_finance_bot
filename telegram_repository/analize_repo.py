@@ -2,7 +2,7 @@ from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext
 
 
-async def generate_report(update: Update, context: CallbackContext) -> None:
+async def display_analyse_menu(update: Update, context: CallbackContext) -> None:
     """Display a menu with 5 buttons for report options."""
     
     reply_keyboard = [

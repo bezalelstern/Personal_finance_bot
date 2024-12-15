@@ -39,4 +39,3 @@ welcome_text = ("Welcome to Expense Tracker Bot! 💰\n\n"
         "Choose an option below to get started.")
 
 MAIN_KEYBOARD = [["💸 Add Expense","💰 Add Income" ], ["❓ Help", "📊 Report"],["Search News"]]
-#["❌ Cancel"]

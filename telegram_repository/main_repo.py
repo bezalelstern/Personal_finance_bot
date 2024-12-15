@@ -3,9 +3,6 @@ from telegram import ReplyKeyboardMarkup, Update
 from telegram.ext import ContextTypes, ConversationHandler
 from texts import MAIN_KEYBOARD, help_text, welcome_text
 
-
-from texts import MAIN_KEYBOARD, help_text, welcome_text
-
 INCOME_TYPE, INCOME_AMOUNT, INCOME_DESCRIPTION = range(3)
 EXPENSE_TYPE, CATEGORY, AMOUNT = range(3)
 
@@ -83,3 +80,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 def get_keyboard_with_cancel(options):
     options_with_cancel = options + [["❌ Cancel"]]
     return ReplyKeyboardMarkup(options_with_cancel, resize_keyboard=True, one_time_keyboard=True)
+
+
+async def handle_any_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle any user message to reset the timer."""
+    await start_timer(context)

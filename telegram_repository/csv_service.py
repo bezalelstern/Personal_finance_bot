@@ -13,6 +13,7 @@ async def upload_csv(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     )
     return 4
 
+
 async def process_csv(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Process the uploaded CSV file and save the data."""
     try:

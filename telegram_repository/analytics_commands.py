@@ -2,10 +2,8 @@ from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes
 from analytics.predictions import ExpenseAnalyzer
 from analytics.insights import InsightGenerator
-import matplotlib.pyplot as plt
-
 from telegram_repository.analize_repo import generate_report
-from telegram_repository.main_repo import back
+
 
 
 async def send_expense_prediction(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -39,6 +37,8 @@ async def send_expense_prediction(update: Update, context: ContextTypes.DEFAULT_
 
     await update.message.reply_text(message, parse_mode='Markdown')
     await generate_report(update, context)
+
+
 
 async def send_savings_insights(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send savings insights."""

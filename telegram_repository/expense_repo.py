@@ -1,6 +1,5 @@
-from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, ConversationHandler
-from repository.postgres_repo import  insert_new_expense
 from repository.postgres_repo import save_temporary_expenses_to_db, save_fixed_expenses_to_db
 from telegram_repository.csv_service import upload_csv
 from telegram_repository.main_repo import start_timer, EXPENSE_TYPE, CATEGORY, AMOUNT, cancel, start, back
@@ -19,6 +18,7 @@ async def add_expense_start(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     )
     return EXPENSE_TYPE
 
+
 async def handle_expense_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle the user's choice for expense type or CSV upload."""
     choice = update.message.text
@@ -34,6 +34,7 @@ async def handle_expense_choice(update: Update, context: ContextTypes.DEFAULT_TY
         await update.message.reply_text("Invalid option. Please try again.")
         return EXPENSE_TYPE
 
+
 async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE, chice) -> int:
     context.user_data["expense_type"] = chice
     keyboard = EXPENSE_CATEGORIES
@@ -45,6 +46,7 @@ async def get_expense_type(update: Update, context: ContextTypes.DEFAULT_TYPE, c
         reply_markup=reply_markup
     )
     return CATEGORY
+
 
 async def get_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     selected_text = update.message.text
@@ -62,6 +64,7 @@ async def get_category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         "(Enter the amount in your local currency)"
     )
     return AMOUNT
+
 
 async def save_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Save the expense to the database."""
@@ -99,9 +102,7 @@ async def save_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         return AMOUNT
 
 
-async def handle_any_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handle any user message to reset the timer."""
-    await start_timer(context)
+
 
 
 

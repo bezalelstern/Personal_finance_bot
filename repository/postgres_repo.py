@@ -130,7 +130,7 @@ def insert_new_expense(csv_file_path,user):
         session.close()
 
 def export_to_csv_with_source_and_user(user_id, record_type):
-    output_csv = f"C:\\Users\\c0548\\PycharmProjects\\Personal_finance_bots\\csv_files\\{user_id}_{record_type}.csv"
+    output_csv = f"C:\\Users\\internet\\PycharmProjects\\Personal_finance_bot\\csv_files\\{user_id}_{record_type}.csv"
     try:
         fixed_records, temporary_records, source_types, categories = get_records_and_categories(session, user_id,
                                                                                                 record_type)

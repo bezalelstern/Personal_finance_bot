@@ -31,6 +31,20 @@ def fetch_table_data(model, columns):
     return df
 
 
+def csv_data(model):
+    # שליפת כל הרשומות
+    results = session.query(model).all()
+
+    # המרת התוצאות לרשימת מילונים
+    data = [
+        {column.name: getattr(record, column.name) for column in model.__table__.columns}
+        for record in results
+    ]
+
+    # יצירת DataFrame
+    df = pd.DataFrame(data)
+    return df
+
 # טבלאות לשליפה
 tables = {
     "Fixed Incomes": (FixedIncome, [FixedIncome.time, FixedIncome.amount]),
@@ -41,5 +55,3 @@ tables = {
 
 def close_session():
     session.close()
-
-

@@ -17,6 +17,7 @@ async def add_income_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     return INCOME_TYPE
 
 
+
 async def get_income_type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Store the income type and ask for the amount."""
     context.user_data['income_type'] = update.message.text
@@ -24,6 +25,8 @@ async def get_income_type(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         return await cancel(update, context)
     await update.message.reply_text("How much was the income?")
     return INCOME_AMOUNT
+
+
 
 
 async def get_income_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -36,6 +39,8 @@ async def get_income_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     except ValueError:
         await update.message.reply_text("Please enter a valid number.")
         return INCOME_AMOUNT
+
+
 
 async def save_income(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Save the income to the database."""
@@ -62,5 +67,4 @@ async def save_income(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         return ConversationHandler.END
     except ValueError:
         await update.message.reply_text("There was an error saving your income. Please try again.")
-        ConversationHandler.END
         return INCOME_DESCRIPTION
